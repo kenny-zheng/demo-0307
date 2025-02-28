@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace App.EF.EF.dbDemoContext;
 
-public partial class tblDemoContext : DbContext
+public partial class dbDemoContext : DbContext
 {
-    public tblDemoContext(DbContextOptions<tblDemoContext> options)
+    public dbDemoContext(DbContextOptions<dbDemoContext> options)
         : base(options)
     {
     }

@@ -11,15 +11,15 @@ using System.Threading.Tasks;
 
 namespace App.EF.EF.dbDemoContext
 {
-    public partial class tblDemoContext
+    public partial class dbDemoContext
     {
-        private ItblDemoContextProcedures _procedures;
+        private IdbDemoContextProcedures _procedures;
 
-        public virtual ItblDemoContextProcedures Procedures
+        public virtual IdbDemoContextProcedures Procedures
         {
             get
             {
-                if (_procedures is null) _procedures = new tblDemoContextProcedures(this);
+                if (_procedures is null) _procedures = new dbDemoContextProcedures(this);
                 return _procedures;
             }
             set
@@ -28,17 +28,17 @@ namespace App.EF.EF.dbDemoContext
             }
         }
 
-        public ItblDemoContextProcedures GetProcedures()
+        public IdbDemoContextProcedures GetProcedures()
         {
             return Procedures;
         }
     }
 
-    public partial class tblDemoContextProcedures : ItblDemoContextProcedures
+    public partial class dbDemoContextProcedures : IdbDemoContextProcedures
     {
-        private readonly tblDemoContext _context;
+        private readonly dbDemoContext _context;
 
-        public tblDemoContextProcedures(tblDemoContext context)
+        public dbDemoContextProcedures(dbDemoContext context)
         {
             _context = context;
         }

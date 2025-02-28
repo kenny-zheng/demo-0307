@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace App.EF.EF.dbDemoContext
 {
-    public partial interface ItblDemoContextProcedures
+    public partial interface IdbDemoContextProcedures
     {
         Task<List<CustOrderHistResult>> CustOrderHistAsync(string customerID, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<CustOrdersDetailResult>> CustOrdersDetailAsync(int? orderID, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
