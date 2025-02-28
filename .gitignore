@@ -15,3 +15,5 @@ webAPI8/App.Enum/bin/
 webAPI8/App.Model/bin/
 webAPI8/App.Api/bin/
 webAPI8/App.BLL/bin/
+webAPI8/App.Test/bin/
+webAPI8/App.Test/obj/
