@@ -29,7 +29,7 @@ namespace App.Api
                 try
                 {
                     //get service
-                    var authService = actionContext.HttpContext.RequestServices.GetService<IAuthService>();
+
                     //get client ip 
                     var iP = IpHelper.GetClinetIPAddress(actionContext.HttpContext);
 
@@ -54,19 +54,7 @@ namespace App.Api
 
                     if (isLive)
                     {
-                        //actionContext.HttpContext.Items.Add("jwtPayload", jwtObject);
-                        //驗權限
-                        var isRoleResult = authService.CheckAuth(new UserAuthArgs() { FunctionId = EnumFunctionId, Ip = iP }, jwtObject).Result;
-                        var isRole = isRoleResult.Entries;
 
-                        if (isRole)
-                        {
-                            actionContext.HttpContext.Items.Add("jwtPayload", jwtObject);
-                        }
-                        else // 沒權限
-                        {
-                            actionContext.Result = new CustomForbiddenResult("權限不足");
-                        }
                     }
                     else // 過期
                     {
