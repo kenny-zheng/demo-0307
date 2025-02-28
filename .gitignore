@@ -9,3 +9,7 @@ webAPI8/App.Common/obj/Debug/net8.0/App.Common.assets.cache
 webAPI8/App.Common/obj/
 webAPI8/App.DB/obj/
 webAPI8/App.DB/bin/
+webAPI8/App.EF/bin/
+webAPI8/App.Common/bin/
+webAPI8/App.Enum/bin/
+webAPI8/App.Model/bin/
