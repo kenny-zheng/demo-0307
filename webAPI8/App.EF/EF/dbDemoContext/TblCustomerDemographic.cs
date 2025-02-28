@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace App.EF.EF.dbDemoContext;
 
-public partial class CategorySalesFor1997
+public partial class TblCustomerDemographic
 {
-    public string CategoryName { get; set; }
+    public string CustomerTypeId { get; set; }
 
-    public decimal? CategorySales { get; set; }
+    public string CustomerDesc { get; set; }
 }

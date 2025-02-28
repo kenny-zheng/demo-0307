@@ -5,13 +5,15 @@ using System.Collections.Generic;
 
 namespace App.EF.EF.dbDemoContext;
 
-public partial class SalesByCategory
+public partial class TblCategory
 {
     public int CategoryId { get; set; }
 
     public string CategoryName { get; set; }
 
-    public string ProductName { get; set; }
+    public string Description { get; set; }
 
-    public decimal? ProductSales { get; set; }
+    public byte[] Picture { get; set; }
+
+    public virtual ICollection<TblProduct> TblProducts { get; set; } = new List<TblProduct>();
 }

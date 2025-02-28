@@ -5,13 +5,11 @@ using System.Collections.Generic;
 
 namespace App.EF.EF.dbDemoContext;
 
-public partial class OrderDetailsExtended
+public partial class TblOrderDetail
 {
     public int OrderId { get; set; }
 
     public int ProductId { get; set; }
-
-    public string ProductName { get; set; }
 
     public decimal UnitPrice { get; set; }
 
@@ -19,5 +17,7 @@ public partial class OrderDetailsExtended
 
     public float Discount { get; set; }
 
-    public decimal? ExtendedPrice { get; set; }
+    public virtual TblOrder Order { get; set; }
+
+    public virtual TblProduct Product { get; set; }
 }

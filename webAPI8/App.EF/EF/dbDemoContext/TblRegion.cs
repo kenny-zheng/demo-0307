@@ -5,11 +5,9 @@ using System.Collections.Generic;
 
 namespace App.EF.EF.dbDemoContext;
 
-public partial class Region
+public partial class TblRegion
 {
     public int RegionId { get; set; }
 
     public string RegionDescription { get; set; }
-
-    public virtual ICollection<Territory> Territories { get; set; } = new List<Territory>();
 }

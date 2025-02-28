@@ -5,13 +5,13 @@ using System.Collections.Generic;
 
 namespace App.EF.EF.dbDemoContext;
 
-public partial class CustomerAndSuppliersByCity
+public partial class TblShipper
 {
-    public string City { get; set; }
+    public int ShipperId { get; set; }
 
     public string CompanyName { get; set; }
 
-    public string ContactName { get; set; }
+    public string Phone { get; set; }
 
-    public string Relationship { get; set; }
+    public virtual ICollection<TblOrder> TblOrders { get; set; } = new List<TblOrder>();
 }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace App.EF.EF.dbDemoContext;
 
-public partial class Product
+public partial class TblProduct
 {
     public int ProductId { get; set; }
 
@@ -27,9 +27,9 @@ public partial class Product
 
     public bool Discontinued { get; set; }
 
-    public virtual Category Category { get; set; }
+    public virtual TblCategory Category { get; set; }
 
-    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+    public virtual TblSupplier Supplier { get; set; }
 
-    public virtual Supplier Supplier { get; set; }
+    public virtual ICollection<TblOrderDetail> TblOrderDetails { get; set; } = new List<TblOrderDetail>();
 }

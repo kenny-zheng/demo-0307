@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace App.EF.EF.dbDemoContext;
 
-public partial class Order
+public partial class TblOrder
 {
     public int OrderId { get; set; }
 
@@ -35,11 +35,11 @@ public partial class Order
 
     public string ShipCountry { get; set; }
 
-    public virtual Customer Customer { get; set; }
+    public virtual TblCustomer Customer { get; set; }
 
-    public virtual Employee Employee { get; set; }
+    public virtual TblEmployee Employee { get; set; }
 
-    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+    public virtual TblShipper ShipViaNavigation { get; set; }
 
-    public virtual Shipper ShipViaNavigation { get; set; }
+    public virtual ICollection<TblOrderDetail> TblOrderDetails { get; set; } = new List<TblOrderDetail>();
 }

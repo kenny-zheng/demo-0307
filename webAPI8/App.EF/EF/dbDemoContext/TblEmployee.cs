@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace App.EF.EF.dbDemoContext;
 
-public partial class Employee
+public partial class TblEmployee
 {
     public int EmployeeId { get; set; }
 
@@ -43,11 +43,9 @@ public partial class Employee
 
     public string PhotoPath { get; set; }
 
-    public virtual ICollection<Employee> InverseReportsToNavigation { get; set; } = new List<Employee>();
+    public virtual ICollection<TblEmployee> InverseReportsToNavigation { get; set; } = new List<TblEmployee>();
 
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+    public virtual TblEmployee ReportsToNavigation { get; set; }
 
-    public virtual Employee ReportsToNavigation { get; set; }
-
-    public virtual ICollection<Territory> Territories { get; set; } = new List<Territory>();
+    public virtual ICollection<TblOrder> TblOrders { get; set; } = new List<TblOrder>();
 }

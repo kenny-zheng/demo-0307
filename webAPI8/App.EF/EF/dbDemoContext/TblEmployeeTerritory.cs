@@ -5,13 +5,9 @@ using System.Collections.Generic;
 
 namespace App.EF.EF.dbDemoContext;
 
-public partial class QuarterlyOrder
+public partial class TblEmployeeTerritory
 {
-    public string CustomerId { get; set; }
+    public int EmployeeId { get; set; }
 
-    public string CompanyName { get; set; }
-
-    public string City { get; set; }
-
-    public string Country { get; set; }
+    public string TerritoryId { get; set; }
 }

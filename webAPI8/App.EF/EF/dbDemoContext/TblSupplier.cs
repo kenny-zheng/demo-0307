@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace App.EF.EF.dbDemoContext;
 
-public partial class Customer
+public partial class TblSupplier
 {
-    public string CustomerId { get; set; }
+    public int SupplierId { get; set; }
 
     public string CompanyName { get; set; }
 
@@ -29,7 +29,7 @@ public partial class Customer
 
     public string Fax { get; set; }
 
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+    public string HomePage { get; set; }
 
-    public virtual ICollection<CustomerDemographic> CustomerTypes { get; set; } = new List<CustomerDemographic>();
+    public virtual ICollection<TblProduct> TblProducts { get; set; } = new List<TblProduct>();
 }
