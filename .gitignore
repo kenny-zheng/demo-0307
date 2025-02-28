@@ -13,3 +13,5 @@ webAPI8/App.EF/bin/
 webAPI8/App.Common/bin/
 webAPI8/App.Enum/bin/
 webAPI8/App.Model/bin/
+webAPI8/App.Api/bin/
+webAPI8/App.BLL/bin/

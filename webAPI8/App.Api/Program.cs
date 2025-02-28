@@ -2,7 +2,6 @@ using App.Api;
 using App.BLL.Employee;
 using Microsoft.OpenApi.Models;
 using NLog.Web;
-using Northwind.Models;
 using System.Reflection;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
@@ -132,10 +131,7 @@ builder.Services.AddSwaggerGen(c =>
 
 });
 builder.Services.AddEntityFrameworkSqlServer();
-builder.Services.AddScoped<IBase, Base>();
-builder.Services.AddScoped<IUser, User>();
 builder.Services.AddScoped<IEmployee, EmployeeService>();
-builder.Services.AddScoped<IAuthService, App.BLL.AuthService>();
 //#AutoID
 //builder.Services.AddScoped<ISample, Sample>();
 

@@ -1,58 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Mapster;
-using App.BLL.Employee;
+﻿using App.EF.EF.dbDemoContext;
 using App.Model.Northwind.Models; // 假設使用 Mapster 進行物件映射
+using Mapster;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.BLL.Employee
 {
     public class EmployeeService : ServiceBase, IEmployee
     {
-
-        private IEmployee _service;
-
-        public EmployeeService(IEmployee service)
-        {
-            this._service = service;
-        }
-
-
         /// <summary>
         /// 取得員工資料
         /// </summary>
         public async Task<ResponseBase<EmployeeGetDataResponse>> GetData(EmployeeGetDataArgs args)
         {
-            var response = new ResponseBase<EmployeeGetDataResponse>()
+            ResponseBase<EmployeeGetDataResponse> response = new ResponseBase<EmployeeGetDataResponse>()
             {
-                Data = new EmployeeGetDataResponse()
+                Entries = new EmployeeGetDataResponse()
             };
 
             try
             {
                 await using (var context = await base.dbTemplate(Enum.ConnectionMode.Slave))
                 {
-                    var employee = await context.Employees
-                        .FirstOrDefaultAsync(e => e.EmployeeID == args.EmployeeID);
+                    TblEmployee? tblEmployee = await context.TblEmployees
+                        .FirstOrDefaultAsync(e => e.EmployeeId == args.EmployeeID);
 
-                    if (employee != null)
+                    if (tblEmployee != null)
                     {
-                        response.Data = employee.Adapt<EmployeeGetDataResponse>();
-                        response.IsSuccess = true;
+                        response.Entries = new EmployeeGetDataResponse
+                        {
+                            EmployeeID = tblEmployee.EmployeeId,
+                            City = tblEmployee.City,
+                            Country = tblEmployee.Country,
+                            FirstName = tblEmployee.FirstName,
+                            PostalCode = tblEmployee.FirstName,
+                        };
+                        response.StatusCode = EnumStatusCode.Success;
                         response.Message = "查詢成功";
                     }
                     else
                     {
-                        response.IsSuccess = false;
+                        response.StatusCode = EnumStatusCode.Fail;
                         response.Message = "找不到該員工";
                     }
                 }
             }
             catch (Exception ex)
             {
-                response.IsSuccess = false;
+                response.StatusCode = EnumStatusCode.Fail;
                 response.Message = ex.Message;
                 _logger.Error($"GetEmployeeData EX Utc Now: {DateTime.UtcNow:yyyy/MM/dd HH:mm:ss}\n EX: {ex}");
             }
@@ -67,18 +61,18 @@ namespace App.BLL.Employee
         {
             var response = new ResponseBase<List<EmployeeGetListResponse>>()
             {
-                Data = new List<EmployeeGetListResponse>()
+                Entries = new List<EmployeeGetListResponse>()
             };
 
             try
             {
-                await using (var context = _context)
+                await using (var context = await base.dbTemplate(Enum.ConnectionMode.Slave))
                 {
-                    var query = context.Employees.AsQueryable();
+                    var query = context.TblEmployees.AsQueryable();
 
                     // 根據查詢條件過濾
                     if (args.EmployeeID > 0)
-                        query = query.Where(e => e.EmployeeID == args.EmployeeID);
+                        query = query.Where(e => e.EmployeeId == args.EmployeeID);
                     if (!string.IsNullOrEmpty(args.LastName))
                         query = query.Where(e => e.LastName.Contains(args.LastName));
                     if (!string.IsNullOrEmpty(args.FirstName))
@@ -93,14 +87,14 @@ namespace App.BLL.Employee
                         query = query.Where(e => e.Country.Contains(args.Country));
 
                     var employees = await query.ToListAsync();
-                    response.Data = employees.Adapt<List<EmployeeGetListResponse>>();
-                    response.IsSuccess = true;
+                    response.Entries = employees.Adapt<List<EmployeeGetListResponse>>();
+                    response.StatusCode = EnumStatusCode.Success;
                     response.Message = "查詢成功";
                 }
             }
             catch (Exception ex)
             {
-                response.IsSuccess = false;
+                response.StatusCode = EnumStatusCode.Fail;
                 response.Message = ex.Message;
                 _logger.Error($"GetEmployeeList EX Utc Now: {DateTime.UtcNow:yyyy/MM/dd HH:mm:ss}\n EX: {ex}");
             }
@@ -115,60 +109,66 @@ namespace App.BLL.Employee
         {
             var response = new ResponseBase<EmployeeSaveDataResponse>()
             {
-                Data = new EmployeeSaveDataResponse()
+                Entries = new EmployeeSaveDataResponse()
             };
 
             try
             {
-                await using (var context = _context)
+                await using (var context = await base.dbTemplate(Enum.ConnectionMode.Master))
                 {
-                    Employee employee;
-                    if (args.EmployeeID > 0) // 更新
-                    {
-                        employee = await context.Employees
-                            .FirstOrDefaultAsync(e => e.EmployeeID == args.EmployeeID);
-                        if (employee == null)
-                        {
-                            response.IsSuccess = false;
-                            response.Message = "找不到要更新的員工";
-                            return response;
-                        }
+                    TblEmployee? tblEmployee = await context.TblEmployees.FindAsync(args.EmployeeID);
+
+                    if (tblEmployee != null) // 更新
+                    {  // 更新屬性
+                        tblEmployee.LastName = args.LastName;
+                        tblEmployee.FirstName = args.FirstName;
+                        tblEmployee.Title = args.Title;
+                        tblEmployee.TitleOfCourtesy = args.TitleOfCourtesy;
+                        tblEmployee.BirthDate = args.BirthDate;
+                        tblEmployee.HireDate = args.HireDate;
+                        tblEmployee.Address = args.Address;
+                        tblEmployee.City = args.City;
+                        tblEmployee.Region = args.Region;
+                        tblEmployee.PostalCode = args.PostalCode;
+                        tblEmployee.Country = args.Country;
+                        tblEmployee.HomePhone = args.HomePhone;
+                        tblEmployee.Extension = args.Extension;
+                        tblEmployee.Photo = args.Photo;
+                        tblEmployee.Notes = args.Notes;
+                        tblEmployee.ReportsTo = args.ReportsTo;
+                        tblEmployee.PhotoPath = args.PhotoPath;
                     }
                     else // 新增
                     {
-                        employee = new Employee();
-                        context.Employees.Add(employee);
+                        tblEmployee = new TblEmployee();
+                        // 更新屬性
+                        tblEmployee.LastName = args.LastName;
+                        tblEmployee.FirstName = args.FirstName;
+                        tblEmployee.Title = args.Title;
+                        tblEmployee.TitleOfCourtesy = args.TitleOfCourtesy;
+                        tblEmployee.BirthDate = args.BirthDate;
+                        tblEmployee.HireDate = args.HireDate;
+                        tblEmployee.Address = args.Address;
+                        tblEmployee.City = args.City;
+                        tblEmployee.Region = args.Region;
+                        tblEmployee.PostalCode = args.PostalCode;
+                        tblEmployee.Country = args.Country;
+                        tblEmployee.HomePhone = args.HomePhone;
+                        tblEmployee.Extension = args.Extension;
+                        tblEmployee.Photo = args.Photo;
+                        tblEmployee.Notes = args.Notes;
+                        tblEmployee.ReportsTo = args.ReportsTo;
+                        tblEmployee.PhotoPath = args.PhotoPath;
+                        await context.TblEmployees.AddAsync(tblEmployee);
                     }
-
-                    // 更新屬性
-                    employee.LastName = args.LastName;
-                    employee.FirstName = args.FirstName;
-                    employee.Title = args.Title;
-                    employee.TitleOfCourtesy = args.TitleOfCourtesy;
-                    employee.BirthDate = args.BirthDate;
-                    employee.HireDate = args.HireDate;
-                    employee.Address = args.Address;
-                    employee.City = args.City;
-                    employee.Region = args.Region;
-                    employee.PostalCode = args.PostalCode;
-                    employee.Country = args.Country;
-                    employee.HomePhone = args.HomePhone;
-                    employee.Extension = args.Extension;
-                    employee.Photo = args.Photo;
-                    employee.Notes = args.Notes;
-                    employee.ReportsTo = args.ReportsTo;
-                    employee.PhotoPath = args.PhotoPath;
-
                     await context.SaveChangesAsync();
-                    response.Data.IsSuccess = true;
-                    response.Data.Message = "儲存成功";
-                    response.IsSuccess = true;
+                    response.StatusCode = EnumStatusCode.Success;
                     response.Message = "員工資料儲存成功";
                 }
             }
             catch (Exception ex)
             {
-                response.IsSuccess = false;
+                response.StatusCode = EnumStatusCode.Fail;
                 response.Message = ex.Message;
                 _logger.Error($"SaveEmployeeData EX Utc Now: {DateTime.UtcNow:yyyy/MM/dd HH:mm:ss}\n EX: {ex}");
             }
@@ -183,34 +183,32 @@ namespace App.BLL.Employee
         {
             var response = new ResponseBase<EmployeeRemoveDataResponse>()
             {
-                Data = new EmployeeRemoveDataResponse()
+                Entries = new EmployeeRemoveDataResponse()
             };
 
             try
             {
-                await using (var context = _context)
+                await using (var context = await base.dbTemplate(Enum.ConnectionMode.Slave))
                 {
-                    var employee = await context.Employees
-                        .FirstOrDefaultAsync(e => e.EmployeeID == args.EmployeeID);
+                    TblEmployee? tblEmployee = await context.TblEmployees
+                        .FirstOrDefaultAsync(e => e.EmployeeId == args.EmployeeID);
 
-                    if (employee == null)
+                    if (tblEmployee == null)
                     {
-                        response.IsSuccess = false;
+                        response.StatusCode = EnumStatusCode.Fail;
                         response.Message = "找不到要移除的員工";
                         return response;
                     }
 
-                    context.Employees.Remove(employee);
+                    context.TblEmployees.Remove(tblEmployee);
                     await context.SaveChangesAsync();
-                    response.Data.IsSuccess = true;
-                    response.Data.Message = "移除成功";
-                    response.IsSuccess = true;
+                    response.StatusCode = EnumStatusCode.Success;
                     response.Message = "員工資料移除成功";
                 }
             }
             catch (Exception ex)
             {
-                response.IsSuccess = false;
+                response.StatusCode = EnumStatusCode.Fail;
                 response.Message = ex.Message;
                 _logger.Error($"RemoveEmployeeData EX Utc Now: {DateTime.UtcNow:yyyy/MM/dd HH:mm:ss}\n EX: {ex}");
             }
@@ -218,14 +216,5 @@ namespace App.BLL.Employee
             return response;
         }
 
-        public Task<ResponseBase<EmployeeGetDataResponse>> GetData(EmployeeGetDataArgs args)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ResponseBase<List<EmployeeGetListResponse>>> GetList(EmployeeGetListArgs args, JWTPayload jwtPayload)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
