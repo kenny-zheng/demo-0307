@@ -5,7 +5,7 @@ namespace App.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmployeeController : ControllerBase
+    public class EmployeeController : BaseController
     {
         private readonly IEmployee _service;
         private readonly IHttpContextAccessor _accessor;
@@ -21,9 +21,10 @@ namespace App.Api.Controllers
         /// </summary>
         /// <param name="args">查詢參數</param>
         /// <returns>單筆員工資料回應</returns>
-        [Route("GetData")]
+        [Route(nameof(GetEmployeeData))]
         [HttpPost]
-        public async Task<ResponseBase<EmployeeGetDataResponse>> GetData([FromBody] EmployeeGetDataArgs args)
+        [AuthorizationFilter]
+        public async Task<ResponseBase<EmployeeGetDataResponse>> GetEmployeeData([FromBody] EmployeeGetDataArgs args)
         {
             return await _service.GetData(args);
         }
@@ -33,12 +34,12 @@ namespace App.Api.Controllers
         /// </summary>
         /// <param name="args">列表查詢參數</param>
         /// <returns>員工列表回應</returns>
-        [Route("GetList")]
+        [Route(nameof(GetEmployeeList))]
         [HttpPost]
-        public async Task<ResponseBase<List<EmployeeGetListResponse>>> GetList([FromBody] EmployeeGetListArgs args)
+        [AuthorizationFilter]
+        public async Task<ResponseBase<List<EmployeeGetListResponse>>> GetEmployeeList([FromBody] EmployeeGetListArgs args)
         {
-            var jwtPayload = GetJWTPayload(); // 假設有一個方法從 HttpContext 獲取 JWT
-            return await _service.GetList(args, jwtPayload);
+            return await _service.GetList(args, base.JWTPayload);
         }
 
         /// <summary>
@@ -46,12 +47,12 @@ namespace App.Api.Controllers
         /// </summary>
         /// <param name="args">儲存參數</param>
         /// <returns>儲存操作回應</returns>
-        [Route("SaveData")]
+        [Route(nameof(SaveEmployeeData))]
         [HttpPost]
-        public async Task<ResponseBase<EmployeeSaveDataResponse>> SaveData([FromBody] EmployeeSaveDataArgs args)
+        [AuthorizationFilter]
+        public async Task<ResponseBase<EmployeeSaveDataResponse>> SaveEmployeeData([FromBody] EmployeeSaveDataArgs args)
         {
-            var jwtPayload = GetJWTPayload(); // 假設有一個方法從 HttpContext 獲取 JWT
-            return await _service.SaveData(args, jwtPayload);
+            return await _service.SaveData(args, base.JWTPayload);
         }
 
         /// <summary>
@@ -59,29 +60,14 @@ namespace App.Api.Controllers
         /// </summary>
         /// <param name="args">移除參數</param>
         /// <returns>移除操作回應</returns>
-        [Route("RemoveData")]
+        [Route(nameof(RemoveEmployeeData))]
         [HttpPost]
-        public async Task<ResponseBase<EmployeeRemoveDataResponse>> RemoveData([FromBody] EmployeeRemoveDataArgs args)
+        [AuthorizationFilter]
+        public async Task<ResponseBase<EmployeeRemoveDataResponse>> RemoveEmployeeData([FromBody] EmployeeRemoveDataArgs args)
         {
-            var jwtPayload = GetJWTPayload(); // 假設有一個方法從 HttpContext 獲取 JWT
-            return await _service.RemoveData(args, jwtPayload);
+            return await _service.RemoveData(args, base.JWTPayload);
         }
 
-        // 輔助方法：從 HttpContext 獲取 JWT Payload（示例實現）
-        private JWTPayload GetJWTPayload()
-        {
-            // 這裡應該實現從 HttpContext 解析 JWT 的邏輯
-            // 以下是簡單示例，您需要根據實際 JWT 實現調整
-            var userId = _accessor.HttpContext?.User?.FindFirst("sub")?.Value;
-            var userName = _accessor.HttpContext?.User?.FindFirst("name")?.Value;
-            var exp = long.Parse(_accessor.HttpContext?.User?.FindFirst("exp")?.Value ?? "0");
 
-            return new JWTPayload
-            {
-                UserId = userId,
-                UserName = userName,
-                Exp = exp
-            };
-        }
     }
 }
